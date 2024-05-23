@@ -5,52 +5,127 @@
 //  Created by Marwan Al.Jabri on 11/11/1445 AH.
 //
 
-import CoreData
+import SwiftUI
 
-struct PersistenceController {
-    static let shared = PersistenceController()
-
-    static var preview: PersistenceController = {
-        let result = PersistenceController(inMemory: true)
-        let viewContext = result.container.viewContext
-        for _ in 0..<10 {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-        }
-        do {
-            try viewContext.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-        }
-        return result
-    }()
-
-    let container: NSPersistentContainer
-
-    init(inMemory: Bool = false) {
-        container = NSPersistentContainer(name: "LittleLemon")
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-
-                /*
-                 Typical reasons for an error here include:
-                 * The parent directory does not exist, cannot be created, or disallows writing.
-                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
-                 * The device is out of space.
-                 * The store could not be migrated to the current model version.
-                 Check the error message to determine what the actual problem was.
-                 */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
-            }
-        })
-        container.viewContext.automaticallyMergesChangesFromParent = true
+struct BroadYellowButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(maxWidth: .infinity)
+            .foregroundColor(configuration.isPressed ? .white : .black)
+            .padding(10)
+            .background(configuration.isPressed ? Color.primaryColor1 : Color.primaryColor2)
+            .cornerRadius(8)
+            .padding(.horizontal)
     }
+}
+
+struct HighlightButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(configuration.isPressed ? Color.primaryColor1 : .white)
+            .padding(10)
+            .background(configuration.isPressed ? .white : Color.primaryColor1)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.primaryColor1, lineWidth: 1)
+            )
+            .padding(.horizontal)
+    }
+}
+
+struct ReversedHighlightButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(configuration.isPressed ? .white : Color.primaryColor1)
+            .padding(10)
+            .background(configuration.isPressed ? Color.primaryColor1 : .white)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.primaryColor1, lineWidth: 1)
+            )
+            .padding(.horizontal)
+    }
+}
+
+struct ToggleableButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(configuration.isPressed ? .white : Color.primaryColor1)
+            .padding(10)
+            .background(configuration.isPressed ? Color.primaryColor1 : .white)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.primaryColor1, lineWidth: 1)
+            )
+            .padding(.horizontal)
+    }
+}
+
+struct CustomToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack {
+                configuration.label
+            }
+        }
+        .foregroundColor(Color.primaryColor1)
+        .padding(5)
+        .background {
+            if configuration.isOn {
+                Color.highlightColor1
+            }
+        }
+        .cornerRadius(8)
+    }
+}
+
+extension Font {
+    static func displayFont() -> Font {
+        return Font.custom("Markazi Text", size: 42).weight(.medium)
+    }
+    
+    static func subTitleFont() -> Font {
+        return Font.custom("Markazi Text", size: 32)
+    }
+    
+    static func leadText() -> Font {
+        return Font.custom("Karla", size: 16).weight(.medium)
+    }
+    
+    static func regularText() -> Font {
+        return Font.custom("Markazi Text", size: 18)
+    }
+    
+    static func sectionTitle() -> Font {
+        return Font.custom("Karla", size: 18).weight(.black)
+    }
+    
+    static func sectionCategories() -> Font {
+        return Font.custom("Karla", size: 16).weight(.heavy)
+    }
+    
+    static func paragraphText() -> Font {
+        return Font.custom("Karla", size: 14)
+    }
+    
+    static func highlightText() -> Font {
+        return Font.custom("Karla", size: 14).weight(.medium)
+    }
+}
+
+
+extension Color {
+    static let primaryColor1 = Color(#colorLiteral(red: 0.2862745225, green: 0.3686274588, blue: 0.3411764801, alpha: 1))
+    static let primaryColor2 = Color(#colorLiteral(red: 0.9568627477, green: 0.8078432088, blue: 0.07843137532, alpha: 1))
+    
+    static let secondaryColor1 = Color(#colorLiteral(red: 0.989240706, green: 0.5802358389, blue: 0.4141188264, alpha: 1))
+    static let secondaryColor2 = Color(#colorLiteral(red: 1, green: 0.8488721251, blue: 0.7164030075, alpha: 1))
+    
+    static let highlightColor1 = Color(#colorLiteral(red: 0.9276351333, green: 0.9375831485, blue: 0.9331009984, alpha: 1))
+    static let highlightColor2 = Color(#colorLiteral(red: 0.1999999881, green: 0.1999999881, blue: 0.1999999881, alpha: 1))
 }
